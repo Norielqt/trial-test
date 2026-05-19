@@ -71,10 +71,3 @@ export default async function handler(req, res) {
   }
 }
 
-  }
-
-  return res.status(200).json({
-    success: true,
-    message: 'Thank you! Your message has been received. We\'ll be in touch shortly.',
-  });
-}
