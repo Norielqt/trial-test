@@ -1,0 +1,18 @@
+{
+  "name": "solstice-shea-homes",
+  "version": "1.0.0",
+  "description": "Solstice by Shea Homes - Landing Page",
+  "type": "module",
+  "scripts": {
+    "build": "sass scss/styles.scss assets/css/styles.css --style=compressed --quiet-deps --silence-deprecation=import",
+    "watch": "sass --watch scss/styles.scss assets/css/styles.css --quiet-deps --silence-deprecation=import"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
+    "bootstrap": "^5.3.3",
+    "sass": "^1.87.0"
+  },
+  "devDependencies": {
+    "@vercel/node": "^5.8.2"
+  }
+}
