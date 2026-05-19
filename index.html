@@ -257,7 +257,7 @@
 
       const btn = form.querySelector('.contact-form__submit');
       btn.disabled = true;
-      btn.textContent = 'Sending...';
+      btn.innerHTML = '<span class="contact-form__spinner"></span>Sending...';
 
       fetch('/api/contact', {
         method: 'POST',
@@ -289,7 +289,7 @@
         })
         .finally(() => {
           btn.disabled = false;
-          btn.textContent = 'Send Message';
+          btn.innerHTML = 'Send Message';
         });
     });
 
