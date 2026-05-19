@@ -626,10 +626,16 @@ img {
     cursor: pointer;
     transition: background 0.2s ease;
     margin-top: 8px;
+    gap: 8px;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: $gold-hover;
       color: $white;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 1;
     }
   }
 
@@ -641,8 +647,6 @@ img {
     border-top-color: $white;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
-    margin-right: 8px;
-    vertical-align: middle;
     flex-shrink: 0;
   }
 
