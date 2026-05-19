@@ -636,6 +636,8 @@ img {
     &:disabled {
       cursor: default;
       opacity: 1;
+      background: $gold;
+      color: $white;
     }
   }
 
