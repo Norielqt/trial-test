@@ -610,15 +610,19 @@ img {
   }
 
   &__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    height: 36px;
     background: $gold;
     color: $white;
     font-family: $font-heading;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 17px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    padding: 15px 24px;
     border: none;
     cursor: pointer;
     transition: background 0.2s ease;
@@ -626,6 +630,7 @@ img {
 
     &:hover {
       background: $gold-hover;
+      color: $white;
     }
   }
 
