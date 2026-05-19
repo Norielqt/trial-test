@@ -138,10 +138,12 @@
           <div class="contact-form__group">
             <label class="contact-form__label form-label" for="fullName">Full Name</label>
             <input class="contact-form__input form-control" type="text" id="fullName" name="fullName" placeholder="Jane Smith" required />
+            <span class="contact-form__error" id="fullNameError"></span>
           </div>
           <div class="contact-form__group">
             <label class="contact-form__label form-label" for="email">Email Address</label>
             <input class="contact-form__input form-control" type="email" id="email" name="email" placeholder="jane@example.com" required />
+            <span class="contact-form__error" id="emailError"></span>
           </div>
         </div>
         <div class="contact-form__group">
@@ -155,18 +157,18 @@
             <option value="tour">Schedule a Tour</option>
             <option value="financing">Financing Options</option>
           </select>
+          <span class="contact-form__error" id="inquiryTypeError"></span>
         </div>
         <div class="contact-form__group">
           <label class="contact-form__label form-label" for="message">Message</label>
           <textarea class="contact-form__textarea form-control" id="message" name="message" placeholder="Tell us what you're looking for..." required></textarea>
+          <span class="contact-form__error" id="messageError"></span>
         </div>
         <button type="submit" class="contact-form__submit btn">Send Message</button>
         <div class="contact-form__message contact-form__message--success" id="successMsg">
           Thank you! Your message has been received. We'll be in touch shortly.
         </div>
-        <div class="contact-form__message contact-form__message--error" id="errorMsg">
-          Please fill in all fields before submitting.
-        </div>
+        <div class="contact-form__message contact-form__message--error" id="serverErrorMsg"></div>
       </form>
     </div>
   </section>
@@ -198,52 +200,96 @@
   </footer>
 
   <script>
-    // Client-side validation + AJAX form submission
     const form = document.getElementById('contactForm');
     const successMsg = document.getElementById('successMsg');
-    const errorMsg = document.getElementById('errorMsg');
+    const serverErrorMsg = document.getElementById('serverErrorMsg');
+
+    const fields = {
+      fullName:    { el: document.getElementById('fullName'),    err: document.getElementById('fullNameError') },
+      email:       { el: document.getElementById('email'),       err: document.getElementById('emailError') },
+      inquiryType: { el: document.getElementById('inquiryType'), err: document.getElementById('inquiryTypeError') },
+      message:     { el: document.getElementById('message'),     err: document.getElementById('messageError') },
+    };
+
+    function setError(key, msg) {
+      fields[key].el.classList.add('is-invalid');
+      fields[key].err.textContent = msg;
+    }
+
+    function clearError(key) {
+      fields[key].el.classList.remove('is-invalid');
+      fields[key].err.textContent = '';
+    }
+
+    Object.keys(fields).forEach(key => {
+      fields[key].el.addEventListener('input', () => clearError(key));
+      fields[key].el.addEventListener('change', () => clearError(key));
+    });
+
+    function validateClient() {
+      let valid = true;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!fields.fullName.el.value.trim()) {
+        setError('fullName', 'Full name is required.'); valid = false;
+      }
+      if (!fields.email.el.value.trim()) {
+        setError('email', 'Email address is required.'); valid = false;
+      } else if (!emailRegex.test(fields.email.el.value.trim())) {
+        setError('email', 'Please enter a valid email address.'); valid = false;
+      }
+      if (!fields.inquiryType.el.value) {
+        setError('inquiryType', 'Please select a type of inquiry.'); valid = false;
+      }
+      if (!fields.message.el.value.trim()) {
+        setError('message', 'Message is required.'); valid = false;
+      }
+      return valid;
+    }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-
-      const fullName = document.getElementById('fullName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const inquiryType = document.getElementById('inquiryType').value;
-      const message = document.getElementById('message').value.trim();
-
       successMsg.classList.remove('visible');
-      errorMsg.classList.remove('visible');
+      serverErrorMsg.classList.remove('visible');
+      Object.keys(fields).forEach(clearError);
 
-      if (!fullName || !email || !inquiryType || !message) {
-        errorMsg.classList.add('visible');
-        return;
-      }
+      if (!validateClient()) return;
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        errorMsg.textContent = 'Please enter a valid email address.';
-        errorMsg.classList.add('visible');
-        return;
-      }
+      const btn = form.querySelector('.contact-form__submit');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
 
       fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName, email, inquiryType, message })
+        body: JSON.stringify({
+          fullName:    fields.fullName.el.value.trim(),
+          email:       fields.email.el.value.trim(),
+          inquiryType: fields.inquiryType.el.value,
+          message:     fields.message.el.value.trim(),
+        })
       })
         .then(res => res.json())
         .then(data => {
           if (data.success) {
             successMsg.classList.add('visible');
             form.reset();
+          } else if (data.errors) {
+            Object.keys(data.errors).forEach(key => {
+              if (fields[key]) setError(key, data.errors[key]);
+            });
           } else {
-            errorMsg.textContent = data.message || 'Something went wrong. Please try again.';
-            errorMsg.classList.add('visible');
+            serverErrorMsg.textContent = data.message || 'Something went wrong. Please try again.';
+            serverErrorMsg.classList.add('visible');
           }
         })
         .catch(() => {
-          errorMsg.textContent = 'Something went wrong. Please try again.';
-          errorMsg.classList.add('visible');
+          serverErrorMsg.textContent = 'Something went wrong. Please try again.';
+          serverErrorMsg.classList.add('visible');
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = 'Send Message';
         });
     });
 
