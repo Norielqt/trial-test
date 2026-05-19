@@ -651,12 +651,15 @@ img {
   }
 
   &__error {
-    display: block;
+    display: none;
     font-family: $font-body;
     font-size: 12px;
     color: #c0392b;
     margin-top: 4px;
-    min-height: 16px;
+
+    &:not(:empty) {
+      display: block;
+    }
   }
 
   &__input,
