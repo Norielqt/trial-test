@@ -85,7 +85,7 @@ img {
   }
 
   @media (max-width: $breakpoint-md) {
-    display: block;
+    grid-template-columns: 1fr 1fr;
     height: auto;
   }
 
@@ -93,10 +93,6 @@ img {
     display: flex;
     flex-direction: column;
     height: 100%;
-
-    @media (max-width: $breakpoint-md) {
-      height: auto;
-    }
   }
 
   &__right {
@@ -108,10 +104,6 @@ img {
       object-fit: cover;
       object-position: top;
       display: block;
-    }
-
-    @media (max-width: $breakpoint-md) {
-      height: 280px;
     }
   }
 
@@ -132,7 +124,7 @@ img {
 
       @media (max-width: $breakpoint-md) {
         flex: none;
-        height: 260px;
+        height: 256px;
       }
     }
 
@@ -142,7 +134,7 @@ img {
 
       @media (max-width: $breakpoint-md) {
         flex: none;
-        height: 180px;
+        height: 144px;
       }
     }
   }
@@ -158,20 +150,23 @@ img {
 
     @media (max-width: $breakpoint-lg) {
       width: 220px;
-      top: 80px;
-      left: 40px;
+      top: 192px;
+      left: 25%;
+      transform: translate(-50%, -50%);
     }
 
     @media (max-width: $breakpoint-md) {
       width: 150px;
-      top: 16px;
-      left: 16px;
+      top: 128px;
+      left: 25%;
+      transform: translate(-50%, -50%);
     }
 
     @media (max-width: 360px) {
       width: 110px;
-      top: 12px;
-      left: 12px;
+      top: 128px;
+      left: 25%;
+      transform: translate(-50%, -50%);
     }
   }
 }
